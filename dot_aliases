@@ -1,0 +1,14 @@
+#!/bin/zsh
+
+# Machine specific
+alias gattest="docker build -t cmalabscience/gattaca:bleeding ~/Documents/Repos/GATTACA/ && GATTACA -v bleeding test"
+
+# General
+alias cl="clear"
+
+## - NeoVim configs
+alias nvimconf="nvim ~/.config/nvim/init.vim"
+alias nvimlua="nvim ~/.config/nvim/lua/plugins.lua"
+
+
+
