@@ -5,10 +5,14 @@ alias gattest="docker build -t cmalabscience/gattaca:bleeding ~/Documents/Repos/
 
 # General
 alias cl="clear"
+alias activate="source ./env/bin/activate"
+alias activatev="source ./venv/bin/activate"
+alias toreal="cd -P ."
 
 ## - NeoVim configs
 alias nvimconf="nvim ~/.config/nvim/init.vim"
 alias nvimlua="nvim ~/.config/nvim/lua/plugins.lua"
 
-
+# Git
+alias gits="git status"
 
