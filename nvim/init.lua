@@ -134,6 +134,14 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- Set .cwl to be interpreted as YAML
+-- Here additional filetypes can be specified
+vim.filetype.add {
+  extension = {
+    cwl = 'yaml',
+  },
+}
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -351,6 +359,44 @@ require('lazy').setup({
     end,
   },
 
+  -- Harpoon, jump between files
+  {
+    'ThePrimeagen/harpoon',
+    branch = 'harpoon2',
+    dependencies = { 'nvim-lua/plenary.nvim', 'nvim-telescope/telescope.nvim' },
+    config = function()
+      local harpoon = require 'harpoon'
+
+      vim.keymap.set('n', '<leader>hf', function()
+        harpoon:list():add()
+      end, { desc = '[H]arpoon this [F]ile' })
+
+      -- Use Telescope windows with Harpoon
+      local conf = require('telescope.config').values
+      local function toggle_telescope(harpoon_files)
+        local file_paths = {}
+        for _, item in ipairs(harpoon_files.items) do
+          table.insert(file_paths, item.value)
+        end
+
+        require('telescope.pickers')
+          .new({}, {
+            prompt_title = 'Harpoon',
+            finder = require('telescope.finders').new_table {
+              results = file_paths,
+            },
+            previewer = conf.file_previewer {},
+            sorter = conf.generic_sorter {},
+          })
+          :find()
+      end
+
+      vim.keymap.set('n', '<leader>hh', function()
+        toggle_telescope(harpoon:list())
+      end, { desc = '[H]ello, [H]arpoon!' })
+    end,
+  },
+
   { -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
     dependencies = {
@@ -460,9 +506,7 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       --  See `:help lspconfig-all` for a list of all supported languages.
       local servers = {
-        -- Python erros (pyflakes) + language server
-        pyflakes = {},
-        jedi_language_server = {},
+        ruff = {},
         rust_analyzer = {},
         r_language_server = {},
         lua_ls = {
