@@ -108,8 +108,8 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
 -- Allow moving trough wrapped lines with arrow keys.
-vim.keymap.set({ 'n', 'v', 'i' }, '<up>', "v:count == 0 ? 'gk' : 'k'", { expr = true })
-vim.keymap.set({ 'n', 'v', 'i' }, '<down>', "v:count == 0 ? 'gj' : 'j'", { expr = true })
+vim.keymap.set({ 'n', 'v' }, '<up>', "v:count == 0 ? 'gk' : 'k'", { expr = true })
+vim.keymap.set({ 'n', 'v' }, '<down>', "v:count == 0 ? 'gj' : 'j'", { expr = true })
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
