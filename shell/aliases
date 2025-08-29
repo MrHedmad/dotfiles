@@ -4,6 +4,57 @@ alias config="/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME"
 alias lt="fd --type f --hidden --exclude .git" # "List Tree"
 alias kbl="kerblam"
 
+# Connect to the new UniTO Vpn with SSO
+unitovpn() {
+    PORTAL=vpn.unito.it
+    case $1 in
+        -h|--help)
+            echo "Use 'connect' or 'c' to connect and 'disconnect' or 'd' to disconnect. Easy"
+            ;;
+
+        connect|c)
+            if [ -e /var/run/gpclient.lock ]; then
+                echo "Already connected, aborting (file /var/run/gpclient/lock exists)."
+                exit 0
+            fi
+
+            echo "Starting gpclient to connect to UniTO VPN..."
+            nohup sudo -b -E gpclient --fix-openssl connect --browser default ${PORTAL} > /dev/null 2>&1
+
+            # Now we wait for a while until the lockfile is created, which happens at the end
+            # of the login process, when the client actually connects to the VPN.
+            t=0
+            # The timeout threshold is 60/(sleep amount)!
+            until [ -e /var/run/gpclient.lock ] || (( t++ > 120 )); do
+                sleep 0.5
+            done
+            # Black magic bash syntax for an in-line IF. Don't ask.
+            [ -e /var/run/gpclient.lock ] && echo "Connected!" || echo "Error or Timed out waiting for connection."
+            ;;
+
+        disconnect|d)
+            if [ ! -e /var/run/gpclient.lock ]; then
+                echo "No connection detected. Run 'connect' before ending the connection (file /var/run/gpclient/lock does not exist)."
+                exit 0
+            fi
+            GPCLIENTPID="$(cat /var/run/gpclient.lock)"
+            echo "Killing gpclient by sending interrupt signal to PID ${GPCLIENTPID}"
+            sudo kill ${GPCLIENTPID}
+
+            # Now we wait for a while until the lockfile is deleted
+            t=0
+            until [ ! -e /var/run/gpclient.lock ] || (( t++ > 10 )); do
+                sleep 0.5
+            done
+            # Black magic bash syntax for an in-line IF. Don't ask.
+            [ ! -e /var/run/gpclient.lock ] && echo "Disconnected!" || echo "Something went wrong - cannot disconnect. Original PID is ${GPCLIENTPID}"
+            ;;
+
+        *)
+            echo "Unknown argument. Pass either 'connect' or 'disconnect'"
+    esac
+}
+
 # Not really an alias but
 body() {
     POSITIONALS=()

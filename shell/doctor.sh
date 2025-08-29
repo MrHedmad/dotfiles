@@ -20,7 +20,8 @@ utils=( \
     [fzf]="https://github.com/junegunn/fzf (fzf)" \
     [sponge]="https://man.archlinux.org/man/sponge.1 (moreutils)" \
     [nvim]="https://neovim.io (neovim)" \
-    [git-lfs]="https://https://git-lfs.com/"
+    [git-lfs]="https://https://git-lfs.com/" \
+    [gpclient]="https://github.com/yuezk/GlobalProtect-openconnect"
 )
 
 for util link in ${(kv)utils}; do
